@@ -7,18 +7,34 @@ class XAmmoAddFactory extends UTAmmoPickupFactory
 /** Ammo factory to transform the spawned ammo factory to on runtime */
 var() transient class<UTAmmoPickupFactory> AmmoClass;
 
-simulated function PostBeginPlay()
+function SetAmmoType(class<UTAmmoPickupFactory> InAmmoClass)
 {
-	if ( bIsDisabled )
+	// transform ammo factory
+	AmmoClass = InAmmoClass;
+	TransformAmmoType(InAmmoClass);
+}
+
+// Simulated. To be called clientsided as well (on replication of TransformedClass)
+simulated function TransformAmmoType(class<UTAmmoPickupFactory> NewAmmoClass)
+{
+	local bool bHadBaseMaterial;
+
+	// re-create the BaseMaterialInstance which is required as transforming the
+	// ammo pickup factory clear that instance. This would result into a hidden
+	// factory after the ammo is taken once
+
+	bHadBaseMaterial = BaseMaterialInstance != none;
+	super.TransformAmmoType(NewAmmoClass);
+
+	if (bHadBaseMaterial && BaseMaterialInstance == none)
 	{
-		return;
+		if ( WorldInfo.NetMode != NM_DedicatedServer && BaseMesh != none )
+		{
+			BaseMaterialInstance = BaseMesh.CreateAndSetMaterialInstanceConstant(0);
+		}
 	}
 
-	// transform ammo factory and re-apply changed properties
-	TransformAmmoType(AmmoClass);
 	bOnlyReplicateHidden = default.bOnlyReplicateHidden;
-
-	Super.PostBeginPlay();
 }
 
 // We only want to change basic properties to allow runtime spawning
@@ -26,10 +42,6 @@ simulated function PostBeginPlay()
 // to support scaling, rotation and mirroring. Factory are replicated fine
 DefaultProperties
 {
-	// set the initial ammo as we don't set it elsewhere in the code (currently)
-	AmmoClass=class'UTAmmo_ShockRifle'
-
-
 	// allow dynamic spawn
 	bStatic=false
 	bNoDelete=false

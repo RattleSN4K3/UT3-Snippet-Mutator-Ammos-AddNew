@@ -11,6 +11,8 @@ struct FactoryLocationInfo
 {
 	// not required. just for convenience
 	var name Name;
+
+	var class<UTAmmoPickupFactory> AmmoClass;
 	
 	var Vector Location;
 	var Rotator Rotation;
@@ -102,7 +104,13 @@ function StoreFactories(class<PickupFactory> FacClass)
 function StoreFactory(PickupFactory Factory)
 {
 	local int i;
+	local class<UTAmmoPickupFactory> AmmoClass;
+
 	if (Factory == none)
+		return;
+
+	AmmoClass = XAmmoAddFactory(Factory) != none ? XAmmoAddFactory(Factory).AmmoClass : class<UTAmmoPickupFactory>(Factory.Class);
+	if (AmmoClass == none)
 		return;
 
 	// store current count, increase array size
@@ -115,6 +123,9 @@ function StoreFactory(PickupFactory Factory)
 	Factories[i].Rotation = Factory.Rotation;
 	Factories[i].Scale = Factory.DrawScale;
 	Factories[i].Scale3D = Factory.DrawScale3D;
+
+	// store the ammo type. use AmmoClass if it's a custom ammo pickup factory
+	Factories[i].AmmoClass = AmmoClass;
 
 	// if base is set, store the fully qualified path (cannot store references in config)
 	if (Factory.Base != none)
@@ -141,8 +152,16 @@ function bool RestoreFactory(WorldInfo WorldInfo, class<PickupFactory> FacClass,
 	local Actor Other;
 	local PickupFactory Fac;
 	local Object Obj;
+	local bool bSwapped;
 	if (WorldInfo != none && FacClass != none)
 	{
+		// override spawning class if AmmoClass can be directly spawned on runtime
+		if (FacInfo.AmmoClass != none && CanSpawn(FacInfo.AmmoClass))
+		{
+			FacClass = FacInfo.AmmoClass;
+			bSwapped = true;
+		}
+
 		// prevent adding the same factory twice
 		foreach WorldInfo.AllActors(FacClass, Other)
 		{
@@ -161,6 +180,12 @@ function bool RestoreFactory(WorldInfo WorldInfo, class<PickupFactory> FacClass,
 			// only apply scale if stored values are valid
 			if (FacInfo.Scale != 0.0) Fac.SetDrawScale(FacInfo.Scale);
 			if (!IsZero(FacInfo.Scale3D)) Fac.SetDrawScale3D(FacInfo.Scale3D);
+
+			// apply custom ammo class if present
+			if (!bSwapped && FacInfo.AmmoClass != none && XAmmoAddFactory(Fac) != none)
+			{
+				XAmmoAddFactory(Fac).SetAmmoType(FacInfo.AmmoClass); 
+			}
 
 			// if base was stored...
 			if (name(FacInfo.Base) != '')
@@ -273,6 +298,11 @@ private static function string GetMapName()
 	}
 
 	return TeampMapName;
+}
+
+private static function bool CanSpawn(class<Actor> ActorClass)
+{
+	return !ActorClass.default.bNoDelete && ActorClass.default.bStatic;
 }
 
 DefaultProperties
