@@ -5,8 +5,6 @@
 
 class XAmmoAddMutator extends UTMutator;
 
-var class<PickupFactory> AmmoFactoryClass;
-
 function PostBeginPlay()
 {
 	// once this mutator gets loaded, it will initialize loading the ammos
@@ -22,7 +20,7 @@ function LoadAmmos(optional string ProfileName = "")
 	if (class'XAmmoAddLocationInfo'.static.Exists(LocInfo, ProfileName))
 	{
 		// ... we enforce to restores factories with our custom factory
-		LocInfo.RestoreFactories(AmmoFactoryClass);
+		LocInfo.RestoreFactories();
 	}
 }
 
@@ -55,5 +53,4 @@ function Mutate(string MutateString, PlayerController Sender)
 
 Defaultproperties
 {
-	AmmoFactoryClass=class'XAmmoAddFactory'
 }

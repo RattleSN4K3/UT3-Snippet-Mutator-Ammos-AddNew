@@ -84,9 +84,9 @@ static function bool Exists(optional out XAmmoAddLocationInfo OutInfo, optional 
 // Public funtions
 //**********************************************************************************
 
-function StoreFactories(class<PickupFactory> FacClass)
+function StoreFactories(optional bool bUpdate = false)
 {
-	local Actor Factory;
+	local UTAmmoPickupFactory AmmoFactory;
 	local WorldInfo WorldInfo;
 
 	// clear old data
@@ -94,23 +94,30 @@ function StoreFactories(class<PickupFactory> FacClass)
 
 	WorldInfo = class'Engine'.static.GetCurrentWorldInfo();
 	`Log(name$"::StoreFactories",,'XMutatorAmmoAdd');
-	foreach WorldInfo.DynamicActors(FacClass, Factory)
+	foreach WorldInfo.DynamicActors(class'UTAmmoPickupFactory', AmmoFactory)
 	{
-		`Log(name$"::StoreFactories - Storing factory"@Factory,,'XMutatorAmmoAdd');
-		StoreFactory(PickupFactory(Factory));
+		`Log(name$"::StoreFactories - Factory"@AmmoFactory,,'XMutatorAmmoAdd');
+
+		// only store not-saved factories, all others should be specified by AmmoClass of XAmmoAddFactory
+		if (CanSpawn(AmmoFactory.Class))
+		{
+			`Log(name$"::StoreFactories - Storing factory"@AmmoFactory,,'XMutatorAmmoAdd');
+			StoreFactory(AmmoFactory);
+
+			// update pickup mesh
+			if (bUpdate)
+			{
+				AmmoFactory.TransformAmmoType(none);
+			}
+		}
 	}
 }
 
-function StoreFactory(PickupFactory Factory)
+function StoreFactory(UTAmmoPickupFactory Factory)
 {
 	local int i;
-	local class<UTAmmoPickupFactory> AmmoClass;
 
 	if (Factory == none)
-		return;
-
-	AmmoClass = XAmmoAddFactory(Factory) != none ? XAmmoAddFactory(Factory).AmmoClass : class<UTAmmoPickupFactory>(Factory.Class);
-	if (AmmoClass == none)
 		return;
 
 	// store current count, increase array size
@@ -125,7 +132,7 @@ function StoreFactory(PickupFactory Factory)
 	Factories[i].Scale3D = Factory.DrawScale3D;
 
 	// store the ammo type. use AmmoClass if it's a custom ammo pickup factory
-	Factories[i].AmmoClass = AmmoClass;
+	Factories[i].AmmoClass = XAmmoAddFactory(Factory) != none ? XAmmoAddFactory(Factory).AmmoClass : Factory.Class;
 
 	// if base is set, store the fully qualified path (cannot store references in config)
 	if (Factory.Base != none)
@@ -134,7 +141,7 @@ function StoreFactory(PickupFactory Factory)
 	}
 }
 
-function RestoreFactories(class<PickupFactory> FacClass)
+function RestoreFactories()
 {
 	local int i;
 	local WorldInfo WorldInfo;
@@ -143,19 +150,21 @@ function RestoreFactories(class<PickupFactory> FacClass)
 	// restore each stored ammo factory info
 	for (i=0; i<Factories.Length; i++)
 	{
-		RestoreFactory(WorldInfo, FacClass, Factories[i]);
+		RestoreFactory(WorldInfo, Factories[i]);
 	}
 }
 
-function bool RestoreFactory(WorldInfo WorldInfo, class<PickupFactory> FacClass, FactoryLocationInfo FacInfo)
+function bool RestoreFactory(WorldInfo WorldInfo, FactoryLocationInfo FacInfo)
 {
 	local Actor Other;
-	local PickupFactory Fac;
+	local class<UTAmmoPickupFactory> FacClass;
+	local UTAmmoPickupFactory Fac;
 	local Object Obj;
 	local bool bSwapped;
 	if (WorldInfo != none && FacClass != none)
 	{
 		// override spawning class if AmmoClass can be directly spawned on runtime
+		FacClass = class'UTAmmoPickupFactory';
 		if (FacInfo.AmmoClass != none && CanSpawn(FacInfo.AmmoClass))
 		{
 			FacClass = FacInfo.AmmoClass;
@@ -302,7 +311,7 @@ private static function string GetMapName()
 
 private static function bool CanSpawn(class<Actor> ActorClass)
 {
-	return !ActorClass.default.bNoDelete && ActorClass.default.bStatic;
+	return !ActorClass.default.bNoDelete && !ActorClass.default.bStatic;
 }
 
 DefaultProperties

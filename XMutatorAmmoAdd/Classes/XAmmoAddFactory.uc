@@ -23,6 +23,11 @@ simulated function TransformAmmoType(class<UTAmmoPickupFactory> NewAmmoClass)
 	// ammo pickup factory clear that instance. This would result into a hidden
 	// factory after the ammo is taken once
 
+	if (NewAmmoClass == none)
+	{
+		NewAmmoClass = AmmoClass;
+	}
+
 	bHadBaseMaterial = BaseMaterialInstance != none;
 	super.TransformAmmoType(NewAmmoClass);
 
@@ -42,6 +47,12 @@ simulated function TransformAmmoType(class<UTAmmoPickupFactory> NewAmmoClass)
 // to support scaling, rotation and mirroring. Factory are replicated fine
 DefaultProperties
 {
+	Begin Object Name=AmmoMeshComp
+		StaticMesh=StaticMesh'PICKUPS.Base_Powerup.Mesh.S_Pickups_Base_Powerup01_Disc'
+		Scale=2.0
+		Translation=(X=0.0,Y=0.0,Z=-20.0)
+	End Object
+
 	// allow dynamic spawn
 	bStatic=false
 	bNoDelete=false

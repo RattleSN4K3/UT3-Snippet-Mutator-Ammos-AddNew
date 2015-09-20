@@ -14,7 +14,6 @@ event bool Build()
 function LoadAmmos()
 {
 	local XAmmoAddLocationInfo LocInfo;
-	local class<PickupFactory> AmmoFactoryClass;
 
 	// ensure a profile exists
 	if (!class'XAmmoAddLocationInfo'.static.Exists(LocInfo, ProfileName))
@@ -23,11 +22,8 @@ function LoadAmmos()
 		return;
 	}
 
-	// retrieve the specific factory class from the mutator properties
-	AmmoFactoryClass = class'XAmmoAddMutator'.default.AmmoFactoryClass;
-
-	// restroes and automatically create these in the editor instance
-	LocInfo.RestoreFactories(AmmoFactoryClass);
+	// restore factories and automatically create these in the editor instance
+	LocInfo.RestoreFactories();
 }
 
 DefaultProperties
