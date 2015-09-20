@@ -24,33 +24,6 @@ function LoadAmmos(optional string ProfileName = "")
 	}
 }
 
-function Mutate(string MutateString, PlayerController Sender)
-{
-	local string command;
-	local XAmmoAddFactory AmmoFac;
-	super.Mutate(MutateString, Sender);
-
-	if (Sender == none)
-		return;
-
-	command = "FixAmmos";
-	if (Left(MutateString, Len(command)) ~= command)
-	{
-		LogInternal(command);
-		foreach WorldInfo.DynamicActors(class'XAmmoAddFactory', AmmoFac)
-		{
-			AmmoFac.SetResOut();
-			//AmmoFac.LastRenderTime = WorldInfo.TimeSeconds;
-			//if (AmmoFac.MIC_Visibility != none)
-			//{
-			//	AmmoFac.MIC_Visibility.SetScalarParameterValue(AmmoFac.VisibilityParamName, 0.0f);
-			//}
-		}
-		
-		return;
-	}
-}
-
 Defaultproperties
 {
 }
