@@ -1,0 +1,8 @@
+Begin Map
+   Begin Level
+      Begin Actor Class=XAmmoAddEditorMutator Archetype=XAmmoAddEditorMutator'XMutatorAmmoAdd.Default__XAmmoAddEditorMutator'
+      End Actor
+   End Level
+Begin Surface
+End Surface
+End Map
