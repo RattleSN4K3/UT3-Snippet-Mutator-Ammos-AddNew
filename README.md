@@ -74,11 +74,13 @@ mutate SaveAmmos CustomProfileName
 ## UI
 
 If you compiled the source code, you can skip this step of adding the package to the _startup packages_ as you already have it specified as _ModPackage_. Otherwise:
-- Open the Config\UTEditor.ini
+- Open the Config\\UTEngine.ini
 - Search for the section `[Engine.StartupPackages]`
 - Add **`Package=XMutatorAmmoAddEditor`** after the section header
 
-This step is required to load the package at the startup of the editor which results into the _builder buttons_ being initialized. You can continue using the mutator.
+This step is required to load the package at the startup of the editor which results into the _builder buttons_ being initialized. **Note**: To not conflict any cooking process, keep in mind to remove the startup package once you're down working with it.
+
+ You can continue using the mutator.
 
 - Open a map in the editor
 - Place `XAmmoAddFactory` at any locations you like  
@@ -87,7 +89,7 @@ This step is required to load the package at the startup of the editor which res
 - Use the **_XMutatorAmmoAdd Saver_** button at the left toolbar to save locations into a map profile of the current opened map
 - If you need to edit the locations, you can use the **_XMutatorAmmoAdd Loader_** button to load the locations from the map profile of the current map
 
-As a note, you can use the advanced menu for each button (rightclick on the button) where you are able to save the profile under a different name. Keep in mind, the mutator in the game only loads the map profile with the exact given.
+As a note, you can use the advanced menu for each button (rightclick on the button) where you are able to save the profile under a different name. Keep in mind, the mutator in the game only loads the map profile with the exact given name.
 
 A map profile is stored in the config file `UTXMutatorAmmoAdd.ini`. Such profile would look like this:
 ```
@@ -95,6 +97,7 @@ A map profile is stored in the config file `UTXMutatorAmmoAdd.ini`. Such profile
 MapName=DM-Deck
 Factories=(Name="XAmmoAddFactory_0",AmmoClass=Class'UTGame.UTAmmo_ShockRifle',Location=(X=1106.000000,Y=1165.000000,Z=-717.400024),Rotation=(Pitch=0,Yaw=0,Roll=0),Scale=1.000000,Scale3D=(X=1.000000,Y=1.000000,Z=1.000000),Base=)
 Factories=(Name="XAmmoAddFactory_1",AmmoClass=Class'UTGame.UTAmmo_FlakCannon',Location=(X=1078.000000,Y=904.000000,Z=-723.000000),Rotation=(Pitch=0,Yaw=0,Roll=0),Scale=1.000000,Scale3D=(X=1.000000,Y=1.000000,Z=1.000000),Base=)
+Setup=(GenericClass=Class'XMutatorAmmoAdd.XAmmoAddFactory')
 ```
 
 If such map profile exists and the mutator will be activated, the ammo pickup factories are loaded and created at the configured locations.
