@@ -179,7 +179,7 @@ function bool RestoreFactory(WorldInfo WorldInfo, FactoryLocationInfo FacInfo)
 	if (WorldInfo != none && FacInfo.AmmoClass != none)
 	{
 		// override spawning class if AmmoClass can be directly spawned on runtime
-		FacClass = class'XAmmoAddFactory';
+		FacClass = Setup.GenericClass;
 		if (CanSpawn(FacInfo.AmmoClass))
 		{
 			FacClass = FacInfo.AmmoClass;
