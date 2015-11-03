@@ -161,11 +161,11 @@ function bool RestoreFactory(WorldInfo WorldInfo, FactoryLocationInfo FacInfo)
 	local UTAmmoPickupFactory Fac;
 	local Object Obj;
 	local bool bSwapped;
-	if (WorldInfo != none && FacClass != none)
+	if (WorldInfo != none && FacInfo.AmmoClass != none)
 	{
 		// override spawning class if AmmoClass can be directly spawned on runtime
-		FacClass = class'UTAmmoPickupFactory';
-		if (FacInfo.AmmoClass != none && CanSpawn(FacInfo.AmmoClass))
+		FacClass = class'XAmmoAddFactory';
+		if (CanSpawn(FacInfo.AmmoClass))
 		{
 			FacClass = FacInfo.AmmoClass;
 			bSwapped = true;
@@ -274,7 +274,7 @@ private static function XAmmoAddLocationInfo NewClass(string InMapName)
 
 	// creating this class with the outer as the current package.
 	// this will force the config file being creating in a config file
-	// with the same name as the package (typcailly UTPackageName.ini)
+	// with the same name as the package (typically UTPackageName.ini)
 	Obj = new(GetPackage(), InMapName) default.Class;
 	return Obj;
 }
