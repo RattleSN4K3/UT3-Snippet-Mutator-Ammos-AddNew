@@ -96,7 +96,7 @@ function SaveAmmos(optional string ProfileName = "")
 		return;
 	}
 
-	LocInfo.ClearConfig();
+	LocInfo.SetupInfo();
 	LocInfo.StoreFactories();
 	LocInfo.SaveConfig();
 	WorldInfo.Game.Broadcast(none, "Map profile data saved ("$LocInfo.FactoryCount()$" factories).");

@@ -2,6 +2,7 @@ class XAmmoAddEditorSaver extends BrushBuilder;
 
 // with parenthesis, the field is shown in the dialog
 var() string ProfileName;
+var() noclear class<UTAmmoPickupFactory> GenericClass;
 
 // Build is called once the user clicks on the button 
 // or chooses "Build" in the advanced menu
@@ -22,8 +23,20 @@ function SaveAmmos()
 		return;
 	}
 
+	if (GenericClass == none)
+	{
+		BadParameters("No generic class set.");
+		return;
+	}
+
+	if (!class'XAmmoAddLocationInfo'.static.CanSpawn(GenericClass))
+	{
+		BadParameters("Given generic class cannot be used on runtime.");
+		return;
+	}
+
 	// clear old data, store new data and save it
-	LocInfo.ClearConfig();
+	LocInfo.SetupInfo(GenericClass);
 	LocInfo.StoreFactories(true);
 	LocInfo.SaveConfig();
 }
@@ -34,4 +47,6 @@ DefaultProperties
 	//BitmapFilename="UnrealExTunnel" // Binaries\EditorRes\Cancel.png
 
 	ToolTip="XMutatorAmmoAdd Saver"
+
+	GenericClass=class'XAmmoAddFactory'
 }
