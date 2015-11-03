@@ -22,12 +22,20 @@ struct FactoryLocationInfo
 	var string Base;
 };
 
+struct FactoryLocationSetup
+{
+	/** Generic ammo class to be used for spawning */
+	var class<UTAmmoPickupFactory> GenericClass;
+};
+
 // Config properties stored in the config file (not the one specified in the class specifier)
 
 /** MapName this profile was created for. This field is used to check for a created class */
 var config string MapName;
 /** Array of all factory to be placed in a level */
 var config array<FactoryLocationInfo> Factories;
+/** Struct which contains various general info */
+var config FactoryLocationSetup Setup;
 
 //**********************************************************************************
 // Static funtions
@@ -83,6 +91,13 @@ static function bool Exists(optional out XAmmoAddLocationInfo OutInfo, optional 
 //**********************************************************************************
 // Public funtions
 //**********************************************************************************
+
+function SetupInfo(optional class<UTAmmoPickupFactory> InGenericClass)
+{
+	ClearConfig();
+
+	Setup.GenericClass = InGenericClass != none ? InGenericClass : class'XAmmoAddFactory';
+}
 
 function StoreFactories(optional bool bUpdate = false)
 {
@@ -232,6 +247,12 @@ private function bool Validate()
 {
 	local int i, j;
 
+	// ensure a spawnable class
+	if (Setup.GenericClass == none || !CanSpawn(Setup.GenericClass))
+	{
+		Setup.GenericClass = class'XAmmoAddFactory';
+	}
+
 	// removing invalid entries
 	for (i=Factories.Length-1; i>=0; i--)
 	{
@@ -309,7 +330,11 @@ private static function string GetMapName()
 	return TeampMapName;
 }
 
-private static function bool CanSpawn(class<Actor> ActorClass)
+//**********************************************************************************
+// Public static funtions
+//**********************************************************************************
+
+static function bool CanSpawn(class<Actor> ActorClass)
 {
 	return !ActorClass.default.bNoDelete && !ActorClass.default.bStatic;
 }

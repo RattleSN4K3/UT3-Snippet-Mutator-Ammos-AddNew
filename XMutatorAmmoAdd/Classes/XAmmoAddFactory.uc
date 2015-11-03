@@ -2,7 +2,8 @@
  * Basic ammo factory to spawn in the level on runtime
  */
 class XAmmoAddFactory extends UTAmmoPickupFactory
-	hidedropdown;
+	//hidedropdown // in general the class should be hidden in dropdowns, but we want to use it for the Saver
+	;
 
 /** Ammo factory to transform the spawned ammo factory to on runtime */
 var() transient class<UTAmmoPickupFactory> AmmoClass;
