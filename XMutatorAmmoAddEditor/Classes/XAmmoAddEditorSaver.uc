@@ -4,6 +4,8 @@ class XAmmoAddEditorSaver extends BrushBuilder;
 var() string ProfileName;
 var() noclear class<UTAmmoPickupFactory> GenericClass;
 
+var() editconst string Error;
+
 // Build is called once the user clicks on the button 
 // or chooses "Build" in the advanced menu
 event bool Build()
@@ -35,10 +37,18 @@ function SaveAmmos()
 		return;
 	}
 
+	Error = "Saved.";
+
 	// clear old data, store new data and save it
 	LocInfo.SetupInfo(GenericClass);
 	LocInfo.StoreFactories(true);
 	LocInfo.SaveConfig();
+}
+
+function bool BadParameters( optional string msg )
+{
+	Error = msg;
+	return super.BadParameters(msg);
 }
 
 DefaultProperties
@@ -49,4 +59,5 @@ DefaultProperties
 	ToolTip="XMutatorAmmoAdd Saver"
 
 	GenericClass=class'XAmmoAddFactory'
+	Error="Click here after Build"
 }
