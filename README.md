@@ -62,7 +62,7 @@ You can create a map profile in two ways. Each would require some setup. The usa
   `Actor` > `Info` > `Mutator` > `UTMutator` > `XAmmoAddMutator` > `XAmmoAddMutatorEditor`  
 
   or open [PASTE.txt](PASTE.txt), copy the content and paste it into a viewport in the editor. This will place a mutator actor into the world
-- Start the level in PIE mode (_Build_>_Play Level_ or rightclick `Play From Here`)
+- Start the level in PIE mode (_Build_>_Play Level_ or right-click `Play From Here`)
 - A map profile is automatically saved
 
 You can also use the console command `mutate SaveAmmos` in the PIE session to save the map profile. This requires to have the mutator activated (placed in the level). You can append a map name to the command to save the map profile data to a different map profile with a custom name.
@@ -78,7 +78,7 @@ If you compiled the source code, you can skip this step of adding the package to
 - Search for the section `[Engine.StartupPackages]`
 - Add **`Package=XMutatorAmmoAddEditor`** after the section header
 
-This step is required to load the package at the startup of the editor which results into the _builder buttons_ being initialized. **Note**: To not conflict any cooking process, keep in mind to remove the startup package once you're down working with it.
+This step is required to load the package at the startup of the editor which results into the _builder buttons_ being initialized. **Note**: To not conflict any cooking process, keep in mind to remove the startup package once you're done working with it.
 
  You can continue using the mutator.
 
@@ -86,7 +86,7 @@ This step is required to load the package at the startup of the editor which res
 - Place `XAmmoAddFactory` at any locations you like  
   `Actor` > `NavigationPoint` > `PickupFactory` > `UTPickupFactory` > `UTItemPickupFactory` > `UTAmmoPickupFactory` > `XAmmoAddFactory`
 - Open the properties window _Actor Properties_ of that placed ammo pickup (Hotkey: F4) and choose an ammo pickup type with **AmmoClass** under the section named `XAmmoAddFactory`
-- Use the **_XMutatorAmmoAdd Saver_** button at the left toolbar to save locations into a map profile of the current opened map
+- Use the **_XMutatorAmmoAdd Saver_** button at the left toolbar to save locations into a map profile of the currently opened map
 - If you need to edit the locations, you can use the **_XMutatorAmmoAdd Loader_** button to load the locations from the map profile of the current map
 
 As a note, you can use the advanced menu for each button (rightclick on the button) where you are able to save the profile under a different name. Keep in mind, the mutator in the game only loads the map profile with the exact given name.
